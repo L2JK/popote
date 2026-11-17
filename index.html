@@ -798,8 +798,8 @@ function pageEdit(id){
   const t = typeOf(draft.type);
   return `<div class="top"><button class="iconbtn" data-act="back">${I.back}</button><h2 style="font-size:22px;flex:1">${isNew ? "Nouvelle recette" : "Modifier"}</h2><button class="btn sm" data-act="save">Enregistrer</button></div>
   <div class="form fade">
-    ${isNew ? `<div class="card qa"><b>✨ Ajout rapide</b><div class="muted" style="font-weight:600;font-size:14px;margin:4px 0 12px">Colle le texte d'une recette ou prends en photo une page de livre : le formulaire se remplit tout seul.</div>
-      <div class="row"><label class="btn sm" style="cursor:pointer">📷 Scanner une page<input type="file" accept="image/*" id="ocr" hidden></label><button type="button" class="btn ghost sm" data-act="paste">📋 Coller un texte</button></div>
+    ${isNew ? `<div class="card qa"><b>✨ Ajout rapide</b><div class="muted" style="font-weight:600;font-size:14px;margin:4px 0 12px">Colle le texte d'une recette ou récupère celui d'une photo : le formulaire se remplit tout seul.</div>
+      <div class="row"><button type="button" class="btn sm" data-act="photo-text">📷 Depuis une photo</button><button type="button" class="btn ghost sm" data-act="paste">📋 Coller un texte</button></div>
       <div class="hint" id="ocrst"></div></div>` : ""}
     <div class="photo-pick"><div class="pv" id="pv" style="--g:${t.g};--gl:${t.gl}">${draft.photo ? `<img src="${esc(draft.photo)}" alt="">` : esc(draft.emoji)}</div>
       <div class="row" style="flex-direction:column;align-items:flex-start;gap:8px">
@@ -1044,6 +1044,7 @@ document.addEventListener("click", async e => {
     case "shortcut-help": e.preventDefault(); shortcutHelp(); break;
     case "scname": { store.set("shortcutName", $("#scname").value.trim()); toast("C'est noté 👍"); break; }
     case "paste": pasteSheet(); break;
+    case "photo-text": photoTextSheet(); break;
     case "timer-help": e.preventDefault(); timerHelp(); break;
     case "tsname": { store.set("timerShortcut", $("#tsname").value.trim()); toast("C'est noté 👍"); break; }
   }
@@ -1263,6 +1264,18 @@ function pasteSheet(){
     <button class="btn wide" id="pgo" style="margin-top:12px">✨ Remplir le formulaire</button>`);
   setTimeout(() => m.querySelector("#pt").focus(), 50);
   m.querySelector("#pgo").onclick = () => { const t = m.querySelector("#pt").value; closeModal(); applyParsed(parseRecipeText(t)); };
+}
+
+function photoTextSheet(){
+  const m = openModal(`<h2>📷 Depuis une photo</h2><div class="help muted">L'iPhone lit le texte des photos bien mieux que Popote. En 3 gestes :</div>
+    <div class="help"><ol>
+      <li>Ouvre la photo de la recette dans l'app <b>Photos</b>.</li>
+      <li>Touche l'icône <b>Texte en direct</b> (en bas à droite de la photo), puis <b>Tout sélectionner</b> et <b>Copier</b>.</li>
+      <li>Reviens ici et colle le texte ci-dessous.</li>
+    </ol><div class="muted" style="font-size:13px">Ingrédients et étapes sur deux photos ? Copie et colle la première, puis la deuxième à la suite.</div></div>
+    <textarea class="in" id="pt2" style="min-height:200px;margin-top:12px" placeholder="Colle le texte ici"></textarea>
+    <button class="btn wide" id="pgo2" style="margin-top:12px">✨ Remplir le formulaire</button>`);
+  m.querySelector("#pgo2").onclick = () => { const t = m.querySelector("#pt2").value; closeModal(); applyParsed(parseRecipeText(t)); };
 }
 
 /* ======================= Modales ======================= */
